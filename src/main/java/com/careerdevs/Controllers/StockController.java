@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -22,14 +23,102 @@ public class StockController {
 
     String stockURL = "https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=";
 
-    @GetMapping("/feature1") // come back to
+    @GetMapping("/feature1")
     public List<CompCSV> feature1 (RestTemplate restTemplate){
-
-        // Sort later //
 
         List<CompCSV> tempCsvData = StockCsvParser.readCSV(); // change name later
 
+        assert tempCsvData != null;
+
+        tempCsvData.sort(Comparator.comparing(CompCSV::getName));
+
+        for (CompCSV comp : tempCsvData) {
+
+            comp.setAssetType(null);
+            comp.setIpoDate(null);
+            comp.setDelistingDate(null);
+            comp.setStatus(null);
+
+        }
+
         return tempCsvData;
+    }
+
+    @GetMapping("/feature2") // Sort by date
+    public List<CompCSV> feature2 (RestTemplate restTemplate){
+
+        List<CompCSV> nameData = StockCsvParser.readCSV();
+
+        assert nameData != null;
+
+        nameData.sort(Comparator.comparing(CompCSV::getName));
+
+        for (CompCSV comp : nameData) {
+
+            comp.setAssetType(null);
+            comp.setExchange(null);
+            comp.setDelistingDate(null);
+            comp.setStatus(null);
+            comp.setSymbol(null);
+
+        }
+
+        return nameData;
+    }
+
+    @GetMapping("/feature3")
+    public List<CompCSV> feature3 (RestTemplate restTemplate){
+
+        List<CompCSV> nasData = StockCsvParser.readCSV();
+
+        assert nasData != null;
+
+        nasData.sort(Comparator.comparing(CompCSV::getName));
+
+        for (CompCSV comp : nasData) {
+
+            switch (comp.getExchange()) {
+                case "NYSE":
+                    comp.setName(null);
+                    comp.setExchange(null);
+                    comp.setSymbol(null);
+                    comp.setAssetType(null);
+                    comp.setIpoDate(null);
+                    comp.setDelistingDate(null);
+                    comp.setStatus(null);
+                    break;
+            }
+        }
+
+        return nasData;
+    }
+
+    @GetMapping("/feature4")
+    public List<CompCSV> feature4 (RestTemplate restTemplate){
+
+        List<CompCSV> nyseData = StockCsvParser.readCSV();
+
+        assert nyseData != null;
+
+        nyseData.sort(Comparator.comparing(CompCSV::getName));
+
+        for (CompCSV comp : nyseData) {
+
+            switch (comp.getExchange()) {
+                case "NASDAQ":
+                    comp.setName(null);
+                    comp.setExchange(null);
+                    comp.setSymbol(null);
+                    comp.setAssetType(null);
+                    comp.setIpoDate(null);
+                    comp.setDelistingDate(null);
+                    comp.setStatus(null);
+                    break;
+            }
+        }
+
+
+        return nyseData;
     }
 
     @GetMapping("/feature5") // return ALL the companies instead of 1
@@ -51,5 +140,15 @@ public class StockController {
         return allcompdata;
     }
 
+
+
+    // Sorting Methods
+    public static class SortByName implements Comparator<CompCSV> {
+
+        public int compare(CompCSV a, CompCSV b)
+        {
+            return a.getName().compareTo(b.getName());
+        }
+    }
 
 }

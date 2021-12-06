@@ -1,7 +1,9 @@
 package com.careerdevs.Models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CompAV {
     private String Symbol;
     private String AssetType;
