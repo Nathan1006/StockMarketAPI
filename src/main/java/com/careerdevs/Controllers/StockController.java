@@ -45,14 +45,14 @@ public class StockController {
         return tempCsvData;
     }
 
-    @GetMapping("/feature2") // Sort by date!!!
+    @GetMapping("/feature2")
     public List<CompCSV> feature2 (RestTemplate restTemplate){
 
         List<CompCSV> nameData = StockCsvParser.readCSV();
 
         assert nameData != null;
 
-        nameData.sort(Comparator.comparing(CompCSV::getName));
+        nameData.sort(Comparator.comparing(CompCSV::getIpoDate));
 
         for (CompCSV comp : nameData) {
 
@@ -145,13 +145,15 @@ public class StockController {
         return allcompdata;
     }
 
-    @GetMapping("/feature6") // Sort by highest to lowest!!
+    @GetMapping("/feature6") // fix sorter
     public List<CompAV> compMarketcapInfo (RestTemplate restTemplate){
 
         ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
         ArrayList<CompAV> allcompdata = new ArrayList<>();
 
         assert csvdata != null;
+
+        //csvdata.sort(Comparator.comparing(CompAV::getMarketCapitalization));
 
         for (CompCSV compData : csvdata){
 
@@ -168,7 +170,7 @@ public class StockController {
         return allcompdata;
     }
 
-    @GetMapping("/feature7")
+    @GetMapping("/feature7") // Sort by dividend date!
     public List<CompAV> compDividendData (RestTemplate restTemplate){
 
         ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
@@ -192,13 +194,41 @@ public class StockController {
     }
 
 
-    // Sorting Methods
+    ///////////////////////////// Sorting Methods///////////////////////////////////////////////
     public static class SortByName implements Comparator<CompCSV> {
 
         public int compare(CompCSV a, CompCSV b)
         {
             return a.getName().compareTo(b.getName());
         }
+
+    }
+
+    public static class SortByNumber implements Comparator<CompAV> {
+
+        public int compare(CompAV a, CompAV b)
+        {
+            return a.getMarketCapitalization().compareTo(b.getMarketCapitalization());
+        }
+
+    }
+
+    public static class SortByIpoDate implements Comparator<CompCSV> {
+
+        public int compare(CompCSV a, CompCSV b)
+        {
+            return a.getIpoDate().compareTo(b.getIpoDate());
+        }
+
+    }
+
+    public static class SortByDividendDate implements Comparator<CompAV> {
+
+        public int compare(CompAV a, CompAV b)
+        {
+            return a.getDividendDate().compareTo(b.getDividendDate());
+        }
+
     }
 
 }
