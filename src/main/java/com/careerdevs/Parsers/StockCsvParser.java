@@ -15,7 +15,7 @@ public class StockCsvParser {
     }
     public static ArrayList<CompCSV> readCSV() {
         try {
-            CSVReader reader = new CSVReader(new FileReader("src/dataset1.csv"), ',');
+            CSVReader reader = new CSVReader(new FileReader("src/dataset2.csv"), ',');
             ArrayList<CompCSV> allCompanies = new ArrayList<>();
             // read line by line
             String[] record = null;

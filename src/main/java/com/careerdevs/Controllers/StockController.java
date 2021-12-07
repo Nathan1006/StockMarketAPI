@@ -1,5 +1,5 @@
 package com.careerdevs.Controllers;
-
+    ///////////////////////////// Imports ///////////////////////////////////////////////
 import ch.qos.logback.classic.pattern.CallerDataConverter;
 import com.careerdevs.Models.CompAV;
 import com.careerdevs.Models.CompCSV;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+    /////////////////////////////////////////////////////////////////////////////////////
 @RestController
 @RequestMapping("/api/stock")
 public class StockController {
@@ -23,6 +23,8 @@ public class StockController {
     private Environment env;
 
     String stockURL = "https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=";
+
+    ///////////////////////////// GetMapping Methods///////////////////////////////////////////////
 
     @GetMapping("/feature1")
     public List<CompCSV> feature1 (RestTemplate restTemplate){
@@ -145,7 +147,7 @@ public class StockController {
         return allcompdata;
     }
 
-    @GetMapping("/feature6") // fix sorter
+    @GetMapping("/feature6") // TODO: fix sorter
     public List<CompAV> compMarketcapInfo (RestTemplate restTemplate){
 
         ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
@@ -167,10 +169,13 @@ public class StockController {
 
         }
 
+        allcompdata.sort(new SortByNumber());
+        Collections.reverse(allcompdata);
+
         return allcompdata;
     }
 
-    @GetMapping("/feature7") // Sort by dividend date!
+    @GetMapping("/feature7") // TODO: Sort by dividend date!
     public List<CompAV> compDividendData (RestTemplate restTemplate){
 
         ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
@@ -193,7 +198,6 @@ public class StockController {
         return allcompdata;
     }
 
-
     ///////////////////////////// Sorting Methods///////////////////////////////////////////////
     public static class SortByName implements Comparator<CompCSV> {
 
@@ -208,7 +212,11 @@ public class StockController {
 
         public int compare(CompAV a, CompAV b)
         {
-            return a.getMarketCapitalization().compareTo(b.getMarketCapitalization());
+
+            Long mc1 = Long.parseLong(a.getMarketCapitalization());
+            Long mc2 = Long.parseLong(a.getMarketCapitalization());
+            return Long.compare(mc1, mc2);
+            //return a.getMarketCapitalization().compareTo(b.getMarketCapitalization()) * -1;
         }
 
     }
@@ -229,6 +237,6 @@ public class StockController {
             return a.getDividendDate().compareTo(b.getDividendDate());
         }
 
-    }
+    } //TODO: apply date object!
 
 }
