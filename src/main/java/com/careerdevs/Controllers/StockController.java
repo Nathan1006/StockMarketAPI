@@ -1,5 +1,6 @@
 package com.careerdevs.Controllers;
 
+import ch.qos.logback.classic.pattern.CallerDataConverter;
 import com.careerdevs.Models.CompAV;
 import com.careerdevs.Models.CompCSV;
 import com.careerdevs.Parsers.StockCsvParser;
@@ -44,7 +45,7 @@ public class StockController {
         return tempCsvData;
     }
 
-    @GetMapping("/feature2") // Sort by date
+    @GetMapping("/feature2") // Sort by date!!!
     public List<CompCSV> feature2 (RestTemplate restTemplate){
 
         List<CompCSV> nameData = StockCsvParser.readCSV();
@@ -121,25 +122,74 @@ public class StockController {
         return nyseData;
     }
 
-    @GetMapping("/feature5") // return ALL the companies instead of 1
+    @GetMapping("/feature5")
     public List<CompAV> compOVInfo (RestTemplate restTemplate){
 
-        List<CompCSV> csvdata = StockCsvParser.readCSV();
-        List<CompAV> allcompdata = new ArrayList<>();
+        ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
+        ArrayList<CompAV> allcompdata = new ArrayList<>();
+
+        assert csvdata != null;
 
         for (CompCSV compData : csvdata){
 
-            System.out.println(compData.getSymbol());
-            String url = "https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + compData.getSymbol();
+            CompAV compApiData = restTemplate.getForObject("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + compData.getSymbol() + "&apikey=" + env.getProperty("stock.key"), CompAV.class);
 
-            CompAV compApiData = restTemplate.getForObject(url, CompAV.class);
-            allcompdata.add(compApiData);
+            assert compApiData != null;
+
+            CompAV trimmedData = CompAV.feature5(compApiData.getSymbol(), compApiData.getAssetType(), compApiData.getName(), compApiData.getDescription(), compApiData.getAddress());
+
+            allcompdata.add(trimmedData);
 
         }
 
         return allcompdata;
     }
 
+    @GetMapping("/feature6") // Sort by highest to lowest!!
+    public List<CompAV> compMarketcapInfo (RestTemplate restTemplate){
+
+        ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
+        ArrayList<CompAV> allcompdata = new ArrayList<>();
+
+        assert csvdata != null;
+
+        for (CompCSV compData : csvdata){
+
+            CompAV compApiData = restTemplate.getForObject("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + compData.getSymbol() + "&apikey=" + env.getProperty("stock.key"), CompAV.class);
+
+            assert compApiData != null;
+
+            CompAV trimmedData = CompAV.feature6(compApiData.getSymbol(), compApiData.getName(), compApiData.getMarketCapitalization());
+
+            allcompdata.add(trimmedData);
+
+        }
+
+        return allcompdata;
+    }
+
+    @GetMapping("/feature7")
+    public List<CompAV> compDividendData (RestTemplate restTemplate){
+
+        ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
+        ArrayList<CompAV> allcompdata = new ArrayList<>();
+
+        assert csvdata != null;
+
+        for (CompCSV compData : csvdata){
+
+            CompAV compApiData = restTemplate.getForObject("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + compData.getSymbol() + "&apikey=" + env.getProperty("stock.key"), CompAV.class);
+
+            assert compApiData != null;
+
+            CompAV trimmedData = CompAV.feature7(compApiData.getSymbol(), compApiData.getName(), compApiData.getDividendDate());
+
+            allcompdata.add(trimmedData);
+
+        }
+
+        return allcompdata;
+    }
 
 
     // Sorting Methods
