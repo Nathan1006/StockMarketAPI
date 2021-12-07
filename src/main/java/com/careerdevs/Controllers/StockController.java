@@ -1,10 +1,8 @@
 package com.careerdevs.Controllers;
     ///////////////////////////// Imports ///////////////////////////////////////////////
-import ch.qos.logback.classic.pattern.CallerDataConverter;
 import com.careerdevs.Models.CompAV;
 import com.careerdevs.Models.CompCSV;
-import com.careerdevs.Parsers.StockCsvParser;
-import net.minidev.json.JSONUtil;
+import com.careerdevs.Utils.StockCsvParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -147,7 +145,7 @@ public class StockController {
         return allcompdata;
     }
 
-    @GetMapping("/feature6") // TODO: fix sorter
+    @GetMapping("/feature6")
     public List<CompAV> compMarketcapInfo (RestTemplate restTemplate){
 
         ArrayList<CompCSV> csvdata = StockCsvParser.readCSV();
@@ -216,7 +214,7 @@ public class StockController {
             Long mc1 = Long.parseLong(a.getMarketCapitalization());
             Long mc2 = Long.parseLong(a.getMarketCapitalization());
             return Long.compare(mc1, mc2);
-            //return a.getMarketCapitalization().compareTo(b.getMarketCapitalization()) * -1;
+
         }
 
     }
